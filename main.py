@@ -21,7 +21,7 @@ async def on_message(message):
     
     sendWaMessage(message.content, message.channel, message.author)
 
-def sendWaMessage(messageContent, messageChannel, messageAuthor):
+async def sendWaMessage(messageContent, messageChannel, messageAuthor):
     requestData = dict([("msg", messageContent), ("room", messageChannel), ("sender", messageAuthor)])
     resultData = requests.post("https://wa-api.defcon.or.kr/getMessage", json=requestData).json()
 
