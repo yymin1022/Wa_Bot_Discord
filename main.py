@@ -19,22 +19,25 @@ async def on_message(message):
     if message.content.startswith("$hello"):
         await message.channel.send("Hello!")
     
-    sendWaMessage(message.content, message.channel, message.author)
+    messageList = sendWaMessage(message.content, message.channel.name, message.author.name)
+
+    if messageList[0]:
+        await message.channel.send(messageList[1])
+    else:
+        for messageItem in messageList[1]:
+            await message.channel.send(messageItem)
 
 def sendWaMessage(messageContent, messageChannel, messageAuthor):
-    requestData = dict([("msg", messageContent), ("room", messageChannel.name), ("sender", messageAuthor.name)])
+    requestData = dict([("msg", messageContent), ("room", messageChannel), ("sender", messageAuthor)])
     resultData = requests.post("https://wa-api.defcon.or.kr/getMessage", json=requestData).json()
 
     resultMessage = resultData["DATA"]["msg"]
 
     if resultData["RESULT"]["RESULT_CODE"] == 0:
         if resultMessage.find("\\m") > 0:
-            resultMessageList = resultMessage.split("\\m")
-
-            for resultMessageItem in resultMessageList:
-                messageChannel.send(resultMessageItem)
+            return [0, messageChannel.send(resultMessageItem)]                
         else:
             resultMessage = resultMessage.replace("\\n", "\n")
-            messageChannel.send(resultMessage)
+            return [1, resultMessage]
 
 client.run(TOKEN)
