@@ -19,7 +19,7 @@ async def on_message(message):
     if message.content.startswith("$hello"):
         await message.channel.send("Hello!")
     
-    sendWaMessage(message.content, message.channel, message.author)
+    sendWaMessage(message.content, str(message.channel), str(message.author))
 
 def sendWaMessage(messageContent, messageChannel, messageAuthor):
     requestData = dict([("msg", messageContent), ("room", messageChannel), ("sender", messageAuthor)])
