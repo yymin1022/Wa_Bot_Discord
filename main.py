@@ -1,4 +1,6 @@
 import discord
+import json
+import requests
 
 tokenFile = open("/home/server/Wa_Bot_Discord/TOKEN_FILE", "r")
 TOKEN = tokenFile.read().rstrip("\n")
