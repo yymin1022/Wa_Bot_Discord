@@ -19,10 +19,10 @@ async def on_message(message):
     if message.content.startswith("$hello"):
         await message.channel.send("Hello!")
     
-    sendWaMessage(message.content, str(message.channel), str(message.author))
+    sendWaMessage(message.content, message.channel, message.author)
 
 def sendWaMessage(messageContent, messageChannel, messageAuthor):
-    requestData = dict([("msg", messageContent), ("room", messageChannel), ("sender", messageAuthor)])
+    requestData = dict([("msg", messageContent), ("room", messageChannel.name), ("sender", messageAuthor.name)])
     resultData = requests.post("https://wa-api.defcon.or.kr/getMessage", json=requestData).json()
 
     resultMessage = resultData["DATA"]["msg"]
