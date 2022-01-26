@@ -35,7 +35,7 @@ def sendWaMessage(messageContent, messageChannel, messageAuthor):
 
     if resultData["RESULT"]["RESULT_CODE"] == 0:
         if resultMessage.find("\\m") > 0:
-            return [0, messageChannel.send(resultMessageItem)]                
+            return [0, resultMessage]                
         else:
             resultMessage = resultMessage.replace("\\n", "\n")
             return [1, resultMessage]
