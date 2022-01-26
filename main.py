@@ -21,7 +21,7 @@ async def on_message(message):
     
     sendWaMessage(message.content, message.channel, message.author)
 
-async def sendWaMessage(messageContent, messageChannel, messageAuthor):
+def sendWaMessage(messageContent, messageChannel, messageAuthor):
     requestData = dict([("msg", messageContent), ("room", messageChannel), ("sender", messageAuthor)])
     resultData = requests.post("https://wa-api.defcon.or.kr/getMessage", json=requestData).json()
 
@@ -32,9 +32,9 @@ async def sendWaMessage(messageContent, messageChannel, messageAuthor):
             resultMessageList = resultMessage.split("\\m")
 
             for resultMessageItem in resultMessageList:
-                await messageChannel.send(resultMessageItem)
+                messageChannel.send(resultMessageItem)
         else:
             resultMessage = resultMessage.replace("\\n", "\n")
-            await messageChannel.send(resultMessage)
+            messageChannel.send(resultMessage)
 
 client.run(TOKEN)
