@@ -33,7 +33,7 @@ async def on_message(message):
 
 def sendWaMessage(messageContent, messageChannel, messageAuthor):
     requestData = dict([("msg", messageContent), ("room", messageChannel), ("sender", messageAuthor)])
-    resultData = requests.post(f"${WA_API_SERVER}/getMessage", json=requestData).json()
+    resultData = requests.post(f"{WA_API_SERVER}/getMessage", json=requestData).json()
 
     resultMessage = resultData["DATA"]["msg"]
 
