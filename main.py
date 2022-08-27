@@ -6,7 +6,11 @@ import requests
 TOKEN = os.getenv("DISCORD_TOKEN", "NO_TOKEN")
 WA_API_SERVER = os.getenv("WA_API_SERVER", "localhost:8080")
 
-client = discord.Client()
+intents = discord.Intents.default()
+intents.message_content = True
+
+client = discord.Client(intents = intents)
+
 @client.event
 async def on_ready():
     print("We have logged in as {0.user}".format(client))
