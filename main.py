@@ -2,9 +2,8 @@ import discord
 import json
 import requests
 
-tokenFile = open("/home/server/Wa_Bot_Discord/TOKEN_FILE", "r")
-TOKEN = tokenFile.read().rstrip("\n")
-tokenFile.close()
+TOKEN = os.getenv("DISCORD_TOKEN", "NO_TOKEN")
+WA_API_SERVER = os.getenv("WA_API_SERVER", "localhost:8080")
 
 client = discord.Client()
 @client.event
@@ -29,7 +28,7 @@ async def on_message(message):
 
 def sendWaMessage(messageContent, messageChannel, messageAuthor):
     requestData = dict([("msg", messageContent), ("room", messageChannel), ("sender", messageAuthor)])
-    resultData = requests.post("https://wa-api.defcon.or.kr/getMessage", json=requestData).json()
+    resultData = requests.post(f"${WA_API_SERVER}/getMessage", json=requestData).json()
 
     resultMessage = resultData["DATA"]["msg"]
 
