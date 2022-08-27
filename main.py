@@ -1,5 +1,6 @@
 import discord
 import json
+import os
 import requests
 
 TOKEN = os.getenv("DISCORD_TOKEN", "NO_TOKEN")
