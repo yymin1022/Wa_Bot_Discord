@@ -6,7 +6,7 @@ pipeline {
             steps {
                 script {
                     DOCKERHUB_CREDENTIAL = "dockerhub-yymin1022"
-                    DOCKER_IMAGE_NAME = "wa-bot-telegram"
+                    DOCKER_IMAGE_NAME = "wa-bot-discord"
                     DOCKER_IMAGE_STORAGE = "yymin1022"
                     DOCKER_IMAGE_TAG = "release1"
                 }
