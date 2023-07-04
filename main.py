@@ -8,7 +8,7 @@ WA_API_SERVER = os.getenv("WA_API_SERVER", "localhost:8080")
 intents = discord.Intents.default()
 intents.message_content = True
 
-client = discord.Client(intents = intents)
+client = discord.Client(intents=intents)
 
 
 @client.event
