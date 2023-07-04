@@ -24,7 +24,7 @@ async def on_message(message):
     if message.content.startswith("$hello"):
         await message.channel.send("Hello!")
     
-    messageList = sendWaMessage(message.content, "Discord Channel", str(message.author.id))
+    messageList = sendWaMessage(message.content, str(message.channel.id), str(message.author.id))
 
     if messageList[0]:
         await message.channel.send(messageList[1])
