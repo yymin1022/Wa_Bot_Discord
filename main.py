@@ -11,9 +11,11 @@ intents.message_content = True
 
 client = discord.Client(intents = intents)
 
+
 @client.event
 async def on_ready():
     print("We have logged in as {0.user}".format(client))
+
 
 @client.event
 async def on_message(message):
@@ -31,6 +33,7 @@ async def on_message(message):
         for messageItem in messageList[1]:
             await message.channel.send(messageItem)
 
+
 def sendWaMessage(messageContent, messageChannel, messageAuthor):
     requestData = dict([("msg", messageContent), ("room", messageChannel), ("sender", messageAuthor)])
     resultData = requests.post(f"{WA_API_SERVER}/getMessage", json=requestData).json()
@@ -45,4 +48,10 @@ def sendWaMessage(messageContent, messageChannel, messageAuthor):
             resultMessage = resultMessage.replace("\\n", "\n")
             return [1, resultMessage]
 
-client.run(TOKEN)
+
+def main():
+    client.run(TOKEN)
+
+
+if __name__ == "__main__":
+    main()
