@@ -46,6 +46,7 @@ def sendWaMessage(messageContent, messageChannel, messageAuthor):
         else:
             resultMessage = resultMessage.replace("\\n", "\n")
             return [1, resultMessage]
+    return []
 
 
 def main():
