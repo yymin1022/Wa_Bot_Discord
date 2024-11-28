@@ -28,10 +28,10 @@ async def on_message(message):
 
     if len(messageList) > 0:
         if messageList[0]:
-            await message.channel.send(messageList[1])
+            await message.reply(messageList[1], mention_author=True)
         else:
             for messageItem in messageList[1]:
-                await message.channel.send(messageItem)
+                await message.reply(messageItem, mention_author=True)
 
 
 def sendWaMessage(messageContent, messageChannel, messageAuthor):
