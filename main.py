@@ -1,3 +1,4 @@
+import base64
 import discord
 import os
 import requests
@@ -24,7 +25,14 @@ async def on_message(message):
     if message.content.startswith("$hello"):
         await message.channel.send("Hello!")
     
-    messageList = sendWaMessage(message.content, str(message.channel.id), str(message.author.id))
+    image_base64 = None
+    if message.attachments:
+        attachment = message.attachments[0]
+        if attachment.content_type and attachment.content_type.startswith("image/"):
+            image_bytes = await attachment.read()
+            image_base64 = base64.b64encode(image_bytes).decode("utf-8")
+    
+    messageList = sendWaMessage(message.content, str(message.channel.id), str(message.author.id), image_base64)
 
     if len(messageList) > 0:
         if messageList[0]:
@@ -34,8 +42,10 @@ async def on_message(message):
                 await message.channel.send(messageItem)
 
 
-def sendWaMessage(messageContent, messageChannel, messageAuthor):
+def sendWaMessage(messageContent, messageChannel, messageAuthor, imageBase64=None):
     requestData = dict([("msg", messageContent), ("room", messageChannel), ("sender", messageAuthor)])
+    if imageBase64:
+        requestData["image"] = imageBase64
     resultData = requests.post(f"{WA_API_SERVER}/getMessage", json=requestData).json()
 
     resultMessage = resultData["DATA"]["msg"]
