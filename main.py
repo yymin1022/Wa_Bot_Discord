@@ -32,7 +32,31 @@ async def on_message(message):
             image_bytes = await attachment.read()
             image_base64 = base64.b64encode(image_bytes).decode("utf-8")
     
-    messageList = sendWaMessage(message.content, str(message.channel.id), str(message.author.id), image_base64)
+    reply_prefix = ""
+    if message.reference and message.reference.resolved:
+        resolved = message.reference.resolved
+        if isinstance(resolved, discord.Message):
+            if not image_base64 and resolved.attachments:
+                orig_attach = resolved.attachments[0]
+                if orig_attach.content_type and orig_attach.content_type.startswith("image/"):
+                    try:
+                        image_bytes = await orig_attach.read()
+                        image_base64 = base64.b64encode(image_bytes).decode("utf-8")
+                    except Exception as e:
+                        print(f"[Error] Failed to read reply original image: {e}")
+            
+            orig_content = resolved.content
+            if not orig_content and resolved.attachments:
+                orig_attach = resolved.attachments[0]
+                if orig_attach.content_type and orig_attach.content_type.startswith("image/"):
+                    orig_content = "📎 [사진 첨부됨]"
+                else:
+                    orig_content = "📎 [첨부파일]"
+                    
+            reply_prefix = f"(답장 대상: {resolved.author.name}님의 메시지 \"{orig_content}\")\n---\n"
+            
+    message_content_to_send = reply_prefix + message.content
+    messageList = sendWaMessage(message_content_to_send, str(message.channel.id), str(message.author.id), image_base64)
 
     if len(messageList) > 0:
         if messageList[0]:
