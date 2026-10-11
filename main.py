@@ -1,3 +1,4 @@
+import asyncio
 import base64
 import io
 import os
@@ -83,7 +84,15 @@ async def on_message(message):
                 "images": reply_images
             }
             
-    messageList = sendWaMessage(message.content, str(message.channel.id), str(message.author.id), images, reply_message)
+    async with message.channel.typing():
+        messageList = await asyncio.to_thread(
+            sendWaMessage,
+            message.content,
+            str(message.channel.id),
+            str(message.author.id),
+            images,
+            reply_message
+        )
 
     if len(messageList) > 0:
         if messageList[0]:
