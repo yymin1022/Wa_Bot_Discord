@@ -34,6 +34,15 @@ def process_image_to_base64(image_bytes: bytes) -> str:
         return base64.b64encode(output_buffer.getvalue()).decode("utf-8")
 
 
+async def delayed_typing(channel, stop_event: asyncio.Event, delay: float = 1.0):
+    try:
+        await asyncio.sleep(delay)
+        async with channel.typing():
+            await stop_event.wait()
+    except asyncio.CancelledError:
+        pass
+
+
 @client.event
 async def on_ready():
     print("We have logged in as {0.user}".format(client))
@@ -84,7 +93,9 @@ async def on_message(message):
                 "images": reply_images
             }
             
-    async with message.channel.typing():
+    stop_event = asyncio.Event()
+    typing_task = asyncio.create_task(delayed_typing(message.channel, stop_event, delay=1.0))
+    try:
         messageList = await asyncio.to_thread(
             sendWaMessage,
             message.content,
@@ -93,6 +104,9 @@ async def on_message(message):
             images,
             reply_message
         )
+    finally:
+        stop_event.set()
+        typing_task.cancel()
 
     if len(messageList) > 0:
         if messageList[0]:
