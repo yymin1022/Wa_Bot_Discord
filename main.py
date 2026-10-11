@@ -1,6 +1,9 @@
 import base64
-import discord
+import io
 import os
+
+import discord
+from PIL import Image, ImageOps
 import requests
 
 TOKEN = os.getenv("DISCORD_TOKEN", "NO_TOKEN")
@@ -10,6 +13,24 @@ intents = discord.Intents.default()
 intents.message_content = True
 
 client = discord.Client(intents=intents)
+
+
+def process_image_to_base64(image_bytes: bytes) -> str:
+    with Image.open(io.BytesIO(image_bytes)) as img:
+        try:
+            img = ImageOps.exif_transpose(img)
+        except Exception:
+            pass
+
+        if img.mode not in ("RGB", "RGBA"):
+            img = img.convert("RGB")
+
+        if max(img.width, img.height) > 1280:
+            img.thumbnail((1280, 1280), Image.Resampling.LANCZOS)
+
+        output_buffer = io.BytesIO()
+        img.save(output_buffer, format="PNG", optimize=True)
+        return base64.b64encode(output_buffer.getvalue()).decode("utf-8")
 
 
 @client.event
@@ -29,8 +50,11 @@ async def on_message(message):
     if message.attachments:
         for attachment in message.attachments:
             if attachment.content_type and attachment.content_type.startswith("image/"):
-                image_bytes = await attachment.read()
-                images.append(base64.b64encode(image_bytes).decode("utf-8"))
+                try:
+                    image_bytes = await attachment.read()
+                    images.append(process_image_to_base64(image_bytes))
+                except Exception as e:
+                    print(f"[Error] Failed to process attachment image: {e}")
     
     reply_message = None
     if message.reference and message.reference.resolved:
@@ -42,9 +66,9 @@ async def on_message(message):
                     if orig_attach.content_type and orig_attach.content_type.startswith("image/"):
                         try:
                             image_bytes = await orig_attach.read()
-                            reply_images.append(base64.b64encode(image_bytes).decode("utf-8"))
+                            reply_images.append(process_image_to_base64(image_bytes))
                         except Exception as e:
-                            print(f"[Error] Failed to read reply original image: {e}")
+                            print(f"[Error] Failed to process reply original image: {e}")
             
             orig_content = resolved.content
             if not orig_content and resolved.attachments:
