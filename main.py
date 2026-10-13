@@ -89,7 +89,7 @@ async def on_message(message):
                     
             reply_message = {
                 "msg": orig_content,
-                "sender": resolved.author.name,
+                "sender": resolved.author.display_name,
                 "images": reply_images
             }
             
@@ -100,7 +100,7 @@ async def on_message(message):
             sendWaMessage,
             message.content,
             str(message.channel.id),
-            str(message.author.id),
+            message.author.display_name,
             images,
             reply_message
         )
